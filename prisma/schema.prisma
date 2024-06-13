@@ -1,0 +1,76 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+  role     Role   @default(USER)
+
+  orders Order[]
+
+  @@index([id])
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model Place {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  events Event[]
+
+  @@index([id])
+  @@map("places")
+}
+
+model Event {
+  id           Int      @id @default(autoincrement())
+  name         String
+  startTime    DateTime @map("start_time")
+  ticketsCount Int      @map("ticket_count")
+  placeId      Int      @map("place_id")
+
+  place   Place    @relation(fields: [placeId], references: [id])
+  tickets Ticket[]
+
+  @@index([id])
+  @@map("events")
+}
+
+model Order {
+  id        Int      @id @default(autoincrement())
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  isPayed   Boolean  @map("is_payed")
+
+  user    User     @relation(fields: [userId], references: [id])
+  tickets Ticket[]
+
+  @@index([id])
+  @@map("orders")
+}
+
+model Ticket {
+  id      Int    @id @default(autoincrement())
+  spot    String
+  eventId Int    @map("event_id")
+  orderId Int    @map("order_id")
+
+  event Event @relation(fields: [eventId], references: [id])
+  order Order @relation(fields: [orderId], references: [id])
+
+  @@index([id])
+  @@map("tickets")
+}
