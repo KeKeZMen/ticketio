@@ -6,7 +6,7 @@ import { Menu } from "./Menu";
 import Link from "next/link";
 import { LoginButton } from "@features/auth/LoginButton";
 import { useSession } from "next-auth/react";
-import { UserProfile } from "@entities/user/ui/UserProfile";
+import { UserProfile } from "@entities/user/ui";
 import { LogoutButton } from "@features/auth/LogoutButton";
 
 export const Header = () => {

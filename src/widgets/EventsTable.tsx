@@ -1,6 +1,6 @@
-import { EventRow } from "@entities/event/ui/EventRow";
+import { EventRow } from "@entities/event/ui";
 import { CreateEventButton } from "@features/event/CreateEventButton";
-import { DeleteEventButton } from "@features/event/DeleteEventButton/ui";
+import { DeleteEventButton } from "@features/event/DeleteEventButton";
 import {
   Table,
   TableBody,
@@ -9,7 +9,6 @@ import {
   TableRow,
   db,
 } from "@shared";
-import React from "react";
 
 export const EventsTable = async () => {
   const events = await db.event.findMany({
@@ -28,19 +27,19 @@ export const EventsTable = async () => {
   });
 
   return (
-    <div className="flex justify-between flex-col gap-3">
-      <div className="flex justify-between items-center">
-        <h2>Мероприятия</h2>
+    <div className="flex justify-between flex-col gap-3 border rounded-md pt-3">
+      <div className="flex justify-between items-center px-3">
+        <h2 className="font-bold">Мероприятия</h2>
         <CreateEventButton />
       </div>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Название</TableHead>
+            <TableHead className="pl-3">Название</TableHead>
             <TableHead>Дата начала</TableHead>
             <TableHead>Количество билетов</TableHead>
             <TableHead>Место</TableHead>
-            <TableHead>Действия</TableHead>
+            <TableHead className="w-[5%] pr-3">Действия</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

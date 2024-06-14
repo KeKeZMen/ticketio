@@ -17,8 +17,10 @@ export const PlaceRow: FC<PropsType> = ({
     <TableRow>
       <TableCell>{place.name}</TableCell>
       <TableCell>
-        {editButton}
-        {deleteButton}
+        <div className="flex gap-3 items-center justify-center">
+          {editButton}
+          {deleteButton}
+        </div>
       </TableCell>
     </TableRow>
   );
