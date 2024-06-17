@@ -12,37 +12,41 @@ import {
   DialogTitle,
   Input,
   Form,
+  Button,
 } from "@shared";
 import { Edit } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, FC } from "react";
-import { Button } from "react-day-picker";
 import { useFormState } from "react-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
-import { editPlaceButton } from "./api";
+import { editPlace } from "./api";
 import { zodSchema } from "./lib";
+import { Place } from "@prisma/client";
 
 type PropsType = {
-  placeId: number;
+  place: Place;
 };
 
-export const EditPlaceButton: FC<PropsType> = ({ placeId }) => {
+export const EditPlaceButton: FC<PropsType> = ({ place }) => {
   const [isOpenedModal, setIsOpenedModal] = useState(false);
   const handleModal = () => setIsOpenedModal((prev) => !prev);
   const onClose = () => setIsOpenedModal(false);
   const router = useRouter();
 
-  const [state, formAction] = useFormState(editPlaceButton, null);
+  const [state, formAction] = useFormState(editPlace, null);
   const form = useForm<z.infer<typeof zodSchema>>({
     resolver: zodResolver(zodSchema),
+    defaultValues: {
+      name: place.name,
+    },
   });
 
   const onSubmit: SubmitHandler<z.infer<typeof zodSchema>> = async (
     values: z.infer<typeof zodSchema>
   ) => {
-    formAction({ values, placeId });
+    formAction({ values, placeId: place.id });
   };
 
   useEffect(() => {
@@ -63,7 +67,7 @@ export const EditPlaceButton: FC<PropsType> = ({ placeId }) => {
 
       <Dialog open={isOpenedModal} onOpenChange={onClose} modal>
         <DialogContent>
-          <DialogTitle>Добавить мероприятие</DialogTitle>
+          <DialogTitle>Отредактировать место проведения</DialogTitle>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
@@ -88,7 +92,7 @@ export const EditPlaceButton: FC<PropsType> = ({ placeId }) => {
                 )}
               />
 
-              <Button type="submit">Создать</Button>
+              <Button type="submit">Отредактировать</Button>
             </form>
           </Form>
         </DialogContent>

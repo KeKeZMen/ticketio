@@ -5,7 +5,7 @@ import { zodSchema } from "./lib";
 import { getServerSession } from "next-auth";
 import { ApiError, authOptions, db } from "@shared";
 
-export const editPlaceButton = async (
+export const editPlace = async (
   state: any,
   { values, placeId }: { values: z.infer<typeof zodSchema>; placeId: number }
 ) => {
@@ -18,6 +18,14 @@ export const editPlaceButton = async (
     });
 
     if (validation.success) {
+      const place = await db.place.findFirst({
+        where: {
+          id: placeId,
+        },
+      });
+
+      if (!place) throw ApiError.badRequest("Площадки не существует");
+
       await db.place.update({
         where: {
           id: placeId,
@@ -29,7 +37,7 @@ export const editPlaceButton = async (
 
       return {
         data: {
-          message: "Успешно изменено",
+          message: "Успешно отредактировано",
         },
       };
     } else {
