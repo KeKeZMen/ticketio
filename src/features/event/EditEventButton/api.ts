@@ -4,6 +4,14 @@ import { z } from "zod";
 import { zodSchema } from "./lib";
 import { ApiError, authOptions, db } from "@shared";
 import { getServerSession } from "next-auth";
+import { writeFile } from "fs/promises";
+import { dirname, resolve, join } from "path";
+import { fileURLToPath } from "url";
+
+const DIR_PATH = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  "../../../../public/events"
+);
 
 export const editEvent = async (
   state: any,
@@ -26,15 +34,15 @@ export const editEvent = async (
       if (!places.some((place) => place.id === validation.data.placeId))
         throw ApiError.badRequest("Выбрано несуществующее место проведения");
 
-      const event = await db.event.findFirst({
+      const existedEvent = await db.event.findFirst({
         where: {
           id: eventId,
         },
       });
 
-      if (!event) throw ApiError.badRequest("Событие не существует");
+      if (!existedEvent) throw ApiError.badRequest("Событие не существует");
 
-      await db.event.update({
+      const event = await db.event.update({
         where: {
           id: eventId,
         },
@@ -45,6 +53,11 @@ export const editEvent = async (
           ticketsCount: validation.data.ticketsCount,
         },
       });
+
+      const fileBuffer = Buffer.from(validation.data.preview);
+      const filePath = join(DIR_PATH, `/${event.id}.jpg`);      
+
+      await writeFile(filePath, fileBuffer, { flag: "w" });
 
       return {
         data: {
@@ -60,7 +73,7 @@ export const editEvent = async (
     return {
       error: {
         message: String(
-          error instanceof ApiError ? error.message : "Ошибка сервера"
+          /* error instanceof ApiError ?  */error/* .message : "Ошибка сервера" */
         ),
       },
     };

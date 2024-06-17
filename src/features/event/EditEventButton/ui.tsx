@@ -27,7 +27,7 @@ import {
 } from "@shared";
 import { CalendarIcon, Edit } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, useEffect, FC } from "react";
+import { useState, useEffect, FC, useCallback, ChangeEvent } from "react";
 import { useFormState } from "react-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -53,6 +53,8 @@ export const EditEventButton: FC<PropsType> = ({ event }) => {
   const [state, formAction] = useFormState(editEvent, null);
   const form = useForm<z.infer<typeof zodSchema>>({
     resolver: zodResolver(zodSchema),
+    shouldUnregister: true,
+    mode: "all",
     defaultValues: {
       placeId: event.placeId,
       startTime: event.startTime,
@@ -69,7 +71,11 @@ export const EditEventButton: FC<PropsType> = ({ event }) => {
   const onSubmit: SubmitHandler<z.infer<typeof zodSchema>> = async (
     values: z.infer<typeof zodSchema>
   ) => {
-    formAction({ values, eventId: event.id });
+    const fileBuffer = Buffer.from(await values.preview[0].arrayBuffer());
+    formAction({
+      values: { ...values, preview: fileBuffer },
+      eventId: event.id,
+    });
   };
 
   useEffect(() => {
@@ -81,6 +87,15 @@ export const EditEventButton: FC<PropsType> = ({ event }) => {
     }
     onClose();
   }, [state]);
+
+  const fileRef = form.register("preview");
+  const [selectedImage, setSelectedImage] = useState(`/events/${event.id}.jpg`);
+  const getFile = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const file = e.target.files[0];
+      setSelectedImage(URL.createObjectURL(file));
+    }
+  }, []);
 
   return (
     <>
@@ -207,6 +222,37 @@ export const EditEventButton: FC<PropsType> = ({ event }) => {
                     <FormMessage />
                   </FormItem>
                 )}
+              />
+
+              <FormField
+                control={form.control}
+                name="preview"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Превью мероприятия</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="file"
+                        {...fileRef}
+                        disabled={form.formState.isLoading}
+                        onChange={(e) => {
+                          const file = e.target?.files?.[0];
+                          field.onChange(file);
+                          getFile(e);
+                        }}
+                        accept="image/jpeg"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div
+                style={{
+                  backgroundImage: `url(${selectedImage})`,
+                }}
+                className="h-[300px] bg-center bg-cover bg-no-repeat w-full"
               />
 
               <Button type="submit">Отредактировать</Button>

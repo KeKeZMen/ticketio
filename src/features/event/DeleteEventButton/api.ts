@@ -1,7 +1,15 @@
 "use server";
 
 import { ApiError, authOptions, db } from "@shared";
+import { unlink } from "fs/promises";
 import { getServerSession } from "next-auth";
+import { dirname, join, resolve } from "path";
+import { fileURLToPath } from "url";
+
+const DIR_PATH = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  "../../../../public/events"
+);
 
 export const deleteEvent = async (eventId: number) => {
   try {
@@ -21,6 +29,9 @@ export const deleteEvent = async (eventId: number) => {
         id: eventId,
       },
     });
+
+    const filePath = join(DIR_PATH, `/${event.id}.jpg`);
+    await unlink(filePath);
 
     return {
       data: {

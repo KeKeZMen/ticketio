@@ -4,6 +4,14 @@ import { authOptions, db, ApiError } from "@shared";
 import { getServerSession } from "next-auth";
 import { z } from "zod";
 import { zodSchema } from "./lib";
+import { writeFile } from "fs/promises";
+import { resolve, dirname, join } from "path";
+import { fileURLToPath } from "url";
+
+const DIR_PATH = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  "../../../../public/events"
+);
 
 export const createEvent = async (
   state: any,
@@ -18,6 +26,7 @@ export const createEvent = async (
       ticketsCount: values.ticketsCount,
       placeId: values.placeId,
       startTime: values.startTime,
+      preview: values.preview,
     });
 
     if (validation.success) {
@@ -26,7 +35,7 @@ export const createEvent = async (
       if (!places.some((place) => place.id === validation.data.placeId))
         throw ApiError.badRequest("Выбрано несуществующее место проведения");
 
-      await db.event.create({
+      const event = await db.event.create({
         data: {
           name: validation.data.name,
           placeId: +validation.data.placeId,
@@ -34,6 +43,10 @@ export const createEvent = async (
           ticketsCount: validation.data.ticketsCount,
         },
       });
+
+      const filePath = join(DIR_PATH, `/${event.id}.jpg`)
+      const fileBuffer = Buffer.from(validation.data.preview);
+      await writeFile(filePath, fileBuffer);
 
       return {
         data: {

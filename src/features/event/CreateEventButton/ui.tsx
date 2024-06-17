@@ -26,7 +26,7 @@ import {
   cn,
 } from "@shared";
 import { CalendarIcon, Plus } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
 import { createEvent } from "./api";
@@ -48,12 +48,15 @@ export const CreateEventButton = () => {
   const [state, formAction] = useFormState(createEvent, null);
   const form = useForm<z.infer<typeof zodSchema>>({
     resolver: zodResolver(zodSchema),
+    shouldUnregister: true,
+    mode: "all",
   });
 
   const onSubmit: SubmitHandler<z.infer<typeof zodSchema>> = async (
     values: z.infer<typeof zodSchema>
   ) => {
-    formAction(values);
+    const fileBuffer = Buffer.from(await values.preview[0].arrayBuffer());
+    formAction({ ...values, preview: fileBuffer });
   };
 
   const { data: places, isLoading: isLoadingPlaces } = useSWR(
@@ -70,6 +73,17 @@ export const CreateEventButton = () => {
     }
     onClose();
   }, [state]);
+
+  const fileRef = form.register("preview");
+  const [selectedImage, setSelectedImage] = useState(
+    "https://avatar.iran.liara.run/public/1"
+  );
+  const getFile = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const file = e.target.files[0];
+      setSelectedImage(URL.createObjectURL(file));
+    }
+  }, []);
 
   return (
     <>
@@ -196,6 +210,37 @@ export const CreateEventButton = () => {
                     <FormMessage />
                   </FormItem>
                 )}
+              />
+
+              <FormField
+                control={form.control}
+                name="preview"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Превью мероприятия</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="file"
+                        {...fileRef}
+                        disabled={form.formState.isLoading}
+                        onChange={(e) => {
+                          const file = e.target?.files?.[0];
+                          field.onChange(file);
+                          getFile(e);
+                        }}
+                        accept="image/jpeg"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div
+                style={{
+                  backgroundImage: `url(${selectedImage})`,
+                }}
+                className="h-[300px] bg-center bg-cover bg-no-repeat w-full"
               />
 
               <Button type="submit">Создать</Button>
