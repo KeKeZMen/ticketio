@@ -19,13 +19,15 @@ export const EventRow: FC<PropsType> = ({
 }) => {
   return (
     <TableRow>
-      <TableCell>{event.name}</TableCell>
-      <TableCell>{format(event.startTime, "PPP", { locale: ru })}</TableCell>
+      <TableCell className="min-w-[300px]">{event.name}</TableCell>
+      <TableCell className="min-w-[150px]">{format(event.startTime, "PPP", { locale: ru })}</TableCell>
       <TableCell>{event.ticketsCount}</TableCell>
-      <TableCell>{event.place.name}</TableCell>
+      <TableCell className="min-w-[150px]">{event.place.name}</TableCell>
       <TableCell>
-        {editButton}
-        {deleteButton}
+        <div className="flex gap-3 items-center justify-center">
+          {editButton}
+          {deleteButton}
+        </div>
       </TableCell>
     </TableRow>
   );

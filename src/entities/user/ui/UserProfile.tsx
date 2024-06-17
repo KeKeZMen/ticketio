@@ -26,9 +26,9 @@ export const UserProfile: FC<PropsType> = ({ user, LogoutButton }) => {
           <AvatarImage
             src={
               user.image ??
-              `https://avatar.iran.liara.run/public/${Math.floor(
-                Math.random() * 10
-              )}`
+              `https://avatar.iran.liara.run/public/${
+                Math.floor(Math.random() * 10) + 1
+              }`
             }
           />
         </Avatar>
