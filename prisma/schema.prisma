@@ -63,10 +63,9 @@ model Order {
 }
 
 model Ticket {
-  id      Int    @id @default(autoincrement())
-  spot    String
-  eventId Int    @map("event_id")
-  orderId Int    @map("order_id")
+  id      Int @id @default(autoincrement())
+  eventId Int @map("event_id")
+  orderId Int @map("order_id")
 
   event Event @relation(fields: [eventId], references: [id])
   order Order @relation(fields: [orderId], references: [id])
