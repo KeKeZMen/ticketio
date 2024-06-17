@@ -33,7 +33,7 @@ export const PlacesTable = async () => {
               place={place}
               key={place.id}
               deleteButton={<DeletePlaceButton placeId={place.id} />}
-              editButton={<EditPlaceButton placeId={place.id} />}
+              editButton={<EditPlaceButton place={place} />}
             />
           ))}
         </TableBody>

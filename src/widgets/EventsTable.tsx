@@ -1,6 +1,7 @@
 import { EventRow } from "@entities/event/ui";
 import { CreateEventButton } from "@features/event/CreateEventButton";
 import { DeleteEventButton } from "@features/event/DeleteEventButton";
+import { EditEventButton } from "@features/event/EditEventButton/ui";
 import {
   Table,
   TableBody,
@@ -48,6 +49,7 @@ export const EventsTable = async () => {
               event={event}
               key={event.id}
               deleteButton={<DeleteEventButton eventId={event.id} />}
+              editButton={<EditEventButton event={event} />}
             />
           ))}
         </TableBody>
