@@ -13,24 +13,17 @@ const DIR_PATH = resolve(
   "../../../../public/events"
 );
 
-export const createEvent = async (
-  state: any,
-  values: z.infer<typeof zodSchema>
-) => {
+export const createEvent = async (state: any, data: FormData) => {
   try {
     const session = await getServerSession(authOptions);
     if (session?.user?.role !== "ADMIN") throw ApiError.noEnoughRights();
 
-    const validation = zodSchema.safeParse({
-      name: values.name,
-      ticketsCount: values.ticketsCount,
-      placeId: values.placeId,
-      startTime: values.startTime,
-      preview: values.preview,
-    });
+    const formData = Object.fromEntries(data);
+    const validation = zodSchema.safeParse(formData);
 
     if (validation.success) {
       const places = await db.place.findMany();
+      console.log(validation.data.preview);
 
       if (!places.some((place) => place.id === validation.data.placeId))
         throw ApiError.badRequest("Выбрано несуществующее место проведения");
@@ -44,7 +37,7 @@ export const createEvent = async (
         },
       });
 
-      const filePath = join(DIR_PATH, `/${event.id}.jpg`)
+      const filePath = join(DIR_PATH, `/${event.id}.jpg`);
       const fileBuffer = Buffer.from(validation.data.preview);
       await writeFile(filePath, fileBuffer);
 

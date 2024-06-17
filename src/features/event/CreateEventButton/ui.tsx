@@ -55,8 +55,13 @@ export const CreateEventButton = () => {
   const onSubmit: SubmitHandler<z.infer<typeof zodSchema>> = async (
     values: z.infer<typeof zodSchema>
   ) => {
-    const fileBuffer = Buffer.from(await values.preview[0].arrayBuffer());
-    formAction({ ...values, preview: fileBuffer });
+    const formData = new FormData();
+    formData.append("name", values.name);
+    formData.append("ticketsCount", JSON.stringify(values.ticketsCount));
+    formData.append("placeId", JSON.stringify(values.placeId));
+    formData.append("startTime", new Date(values.startTime).toUTCString());
+    formData.append("preview", values.preview);
+    formAction(formData);
   };
 
   const { data: places, isLoading: isLoadingPlaces } = useSWR(
