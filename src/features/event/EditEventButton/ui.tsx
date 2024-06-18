@@ -39,6 +39,7 @@ import { ru } from "date-fns/locale";
 import { placeFetcher } from "@entities/place/api";
 import useSWR from "swr";
 import { Event } from "@prisma/client";
+import clsx from "clsx";
 
 type PropsType = {
   event: Event;
@@ -71,11 +72,13 @@ export const EditEventButton: FC<PropsType> = ({ event }) => {
   const onSubmit: SubmitHandler<z.infer<typeof zodSchema>> = async (
     values: z.infer<typeof zodSchema>
   ) => {
-    const fileBuffer = Buffer.from(await values.preview[0].arrayBuffer());
-    formAction({
-      values: { ...values, preview: fileBuffer },
-      eventId: event.id,
-    });
+    const formData = new FormData();
+    formData.append("name", values.name);
+    formData.append("ticketsCount", JSON.stringify(values.ticketsCount));
+    formData.append("placeId", JSON.stringify(values.placeId));
+    formData.append("startTime", new Date(values.startTime).toUTCString());
+    formData.append("preview", values.preview[0]);
+    formAction({ data: formData, eventId: event.id });
   };
 
   useEffect(() => {
@@ -252,8 +255,14 @@ export const EditEventButton: FC<PropsType> = ({ event }) => {
                 style={{
                   backgroundImage: `url(${selectedImage})`,
                 }}
-                className="h-[300px] bg-center bg-cover bg-no-repeat w-full"
-              />
+                className={clsx(
+                  "h-[300px] bg-center bg-cover bg-no-repeat w-full",
+                  !selectedImage &&
+                    "border-2 border-dotted flex justify-center items-center"
+                )}
+              >
+                {!selectedImage && <span>Выберите изображение</span>}
+              </div>
 
               <Button type="submit">Отредактировать</Button>
             </form>

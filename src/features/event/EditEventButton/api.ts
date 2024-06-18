@@ -1,6 +1,5 @@
 "use server";
 
-import { z } from "zod";
 import { zodSchema } from "./lib";
 import { ApiError, authOptions, db } from "@shared";
 import { getServerSession } from "next-auth";
@@ -15,18 +14,14 @@ const DIR_PATH = resolve(
 
 export const editEvent = async (
   state: any,
-  { values, eventId }: { values: z.infer<typeof zodSchema>; eventId: number }
+  { data, eventId }: { data: FormData; eventId: number }
 ) => {
   try {
     const session = await getServerSession(authOptions);
     if (session?.user?.role !== "ADMIN") throw ApiError.noEnoughRights();
 
-    const validation = zodSchema.safeParse({
-      name: values.name,
-      ticketsCount: values.ticketsCount,
-      placeId: values.placeId,
-      startTime: values.startTime,
-    });
+    const formData = Object.fromEntries(data);
+    const validation = zodSchema.safeParse(formData);
 
     if (validation.success) {
       const places = await db.place.findMany();
@@ -49,15 +44,17 @@ export const editEvent = async (
         data: {
           name: validation.data.name,
           placeId: +validation.data.placeId,
-          startTime: validation.data.startTime,
+          startTime: new Date(validation.data.startTime),
           ticketsCount: validation.data.ticketsCount,
         },
       });
 
-      const fileBuffer = Buffer.from(validation.data.preview);
-      const filePath = join(DIR_PATH, `/${event.id}.jpg`);      
-
-      await writeFile(filePath, fileBuffer, { flag: "w" });
+      if (validation.data.preview !== "undefined") {
+        const file = validation.data.preview as File;
+        const filePath = join(DIR_PATH, `/${event.id}.jpg`);
+        const fileBuffer = Buffer.from(await file.arrayBuffer());
+        await writeFile(filePath, fileBuffer, { flag: "w" });
+      }
 
       return {
         data: {
@@ -73,7 +70,7 @@ export const editEvent = async (
     return {
       error: {
         message: String(
-          /* error instanceof ApiError ?  */error/* .message : "Ошибка сервера" */
+          error /* instanceof ApiError ? error.message : "Ошибка сервера" */
         ),
       },
     };

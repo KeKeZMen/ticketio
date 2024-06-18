@@ -38,6 +38,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { zodSchema } from "./lib";
+import clsx from "clsx";
 
 export const CreateEventButton = () => {
   const [isOpenedModal, setIsOpenedModal] = useState(false);
@@ -60,7 +61,7 @@ export const CreateEventButton = () => {
     formData.append("ticketsCount", JSON.stringify(values.ticketsCount));
     formData.append("placeId", JSON.stringify(values.placeId));
     formData.append("startTime", new Date(values.startTime).toUTCString());
-    formData.append("preview", values.preview);
+    formData.append("preview", values.preview[0]);
     formAction(formData);
   };
 
@@ -80,9 +81,7 @@ export const CreateEventButton = () => {
   }, [state]);
 
   const fileRef = form.register("preview");
-  const [selectedImage, setSelectedImage] = useState(
-    "https://avatar.iran.liara.run/public/1"
-  );
+  const [selectedImage, setSelectedImage] = useState("");
   const getFile = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const file = e.target.files[0];
@@ -112,7 +111,6 @@ export const CreateEventButton = () => {
                     <FormLabel>Название</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Название"
                         type="text"
                         {...field}
                         disabled={form.formState.isLoading}
@@ -131,7 +129,6 @@ export const CreateEventButton = () => {
                     <FormLabel>Количество билетов</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Количество билетов"
                         type="number"
                         {...field}
                         disabled={form.formState.isLoading}
@@ -193,11 +190,8 @@ export const CreateEventButton = () => {
                               !field.value && "text-muted-foreground"
                             )}
                           >
-                            {field.value ? (
-                              format(field.value, "PPP", { locale: ru })
-                            ) : (
-                              <span>Выберите дату</span>
-                            )}
+                            {field.value &&
+                              format(field.value, "PPP", { locale: ru })}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
@@ -229,8 +223,7 @@ export const CreateEventButton = () => {
                         {...fileRef}
                         disabled={form.formState.isLoading}
                         onChange={(e) => {
-                          const file = e.target?.files?.[0];
-                          field.onChange(file);
+                          field.onChange(e);
                           getFile(e);
                         }}
                         accept="image/jpeg"
@@ -245,8 +238,14 @@ export const CreateEventButton = () => {
                 style={{
                   backgroundImage: `url(${selectedImage})`,
                 }}
-                className="h-[300px] bg-center bg-cover bg-no-repeat w-full"
-              />
+                className={clsx(
+                  "h-[300px] bg-center bg-cover bg-no-repeat w-full",
+                  !selectedImage &&
+                    "border-2 border-dotted flex justify-center items-center"
+                )}
+              >
+                {!selectedImage && <span>Выберите изображение</span>}
+              </div>
 
               <Button type="submit">Создать</Button>
             </form>

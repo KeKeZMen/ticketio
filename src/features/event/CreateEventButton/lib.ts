@@ -4,10 +4,12 @@ export const zodSchema = z.object({
   name: z.string({ message: "Поле не может быть пустым" }),
   ticketsCount: z.coerce
     .number({
-      message: "Неверный формат количества билетов",
+      message: "Поле не может быть пустым",
     })
     .min(1, { message: "Количество билетов не может быть меньше 1" }),
-  placeId: z.coerce.number({ message: "Неверно выбрано место проведения" }),
-  startTime: z.date({ message: "Неверно выбрана дата проведения" }),
+  placeId: z.coerce.number({ message: "Не выбрано место проведения" }),
+  startTime: z.any().refine((date) => new Date(date), {
+    message: "Неверно выбрано время проведения",
+  }),
   preview: z.any(),
 });
