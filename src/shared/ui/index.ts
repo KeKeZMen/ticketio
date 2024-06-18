@@ -12,3 +12,4 @@ export * from "./select";
 export * from "./popover";
 export * from "./calendar";
 export * from "./delete-confirm";
+export * from "./textarea";
