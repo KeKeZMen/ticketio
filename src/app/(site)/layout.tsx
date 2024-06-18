@@ -9,7 +9,7 @@ export default function SiteLayout({
   return (
     <>
       <Header />
-      {children}
+      <main className="md:container mb-10">{children}</main>
     </>
   );
 }
