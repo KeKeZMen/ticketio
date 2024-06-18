@@ -112,7 +112,7 @@ export const EditEventButton: FC<PropsType> = ({ event }) => {
       </button>
 
       <Dialog open={isOpenedModal} onOpenChange={onClose} modal>
-        <DialogContent className="w-[600px]">
+        <DialogContent>
           <DialogTitle>Добавить мероприятие</DialogTitle>
           <Form {...form}>
             <form
