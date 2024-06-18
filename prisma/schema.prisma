@@ -36,11 +36,12 @@ model Place {
 }
 
 model Event {
-  id           Int      @id @default(autoincrement())
+  id           String   @id @default(uuid())
   name         String
   startTime    DateTime @map("start_time")
-  ticketsCount Int      @map("ticket_count")
+  ticketsCount Int      @map("tickets_count")
   placeId      Int      @map("place_id")
+  ticketCost   Int      @map("ticket_cost")
 
   place   Place    @relation(fields: [placeId], references: [id])
   tickets Ticket[]
@@ -50,7 +51,7 @@ model Event {
 }
 
 model Order {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   userId    String   @map("user_id")
   createdAt DateTime @default(now()) @map("created_at")
   isPayed   Boolean  @map("is_payed")
@@ -63,9 +64,9 @@ model Order {
 }
 
 model Ticket {
-  id      Int @id @default(autoincrement())
-  eventId Int @map("event_id")
-  orderId Int @map("order_id")
+  id      String @id @default(uuid())
+  eventId String @map("event_id")
+  orderId String @map("order_id")
 
   event Event @relation(fields: [eventId], references: [id])
   order Order @relation(fields: [orderId], references: [id])
