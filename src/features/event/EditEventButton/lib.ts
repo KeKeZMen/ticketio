@@ -11,5 +11,6 @@ export const zodSchema = z.object({
   startTime: z.any().refine((date) => new Date(date), {
     message: "Неверно выбрано время проведения",
   }),
+  ticketCost: z.coerce.number({ message: "Поле не может быть пустым" }),
   preview: z.any().optional(),
 });

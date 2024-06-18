@@ -8,7 +8,7 @@ import { RxCross1 } from "react-icons/rx";
 import { deleteEvent } from "./api";
 
 type PropsType = {
-  eventId: number;
+  eventId: string;
 };
 
 export const DeleteEventButton: FC<PropsType> = ({ eventId }) => {

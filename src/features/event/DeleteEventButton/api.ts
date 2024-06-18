@@ -11,7 +11,7 @@ const DIR_PATH = resolve(
   "../../../../public/events"
 );
 
-export const deleteEvent = async (eventId: number) => {
+export const deleteEvent = async (eventId: string) => {
   try {
     const session = await getServerSession(authOptions);
     if (session?.user?.role !== "ADMIN") throw ApiError.noEnoughRights();

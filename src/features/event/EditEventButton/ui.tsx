@@ -75,6 +75,7 @@ export const EditEventButton: FC<PropsType> = ({ event }) => {
     const formData = new FormData();
     formData.append("name", values.name);
     formData.append("ticketsCount", JSON.stringify(values.ticketsCount));
+    formData.append("ticketCost", JSON.stringify(values.ticketCost));
     formData.append("placeId", JSON.stringify(values.placeId));
     formData.append("startTime", new Date(values.startTime).toUTCString());
     formData.append("preview", values.preview[0]);
@@ -142,6 +143,24 @@ export const EditEventButton: FC<PropsType> = ({ event }) => {
                     <FormControl>
                       <Input
                         placeholder="Количество билетов"
+                        type="number"
+                        {...field}
+                        disabled={form.formState.isLoading}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="ticketCost"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Стоимость билетов в ₽</FormLabel>
+                    <FormControl>
+                      <Input
                         type="number"
                         {...field}
                         disabled={form.formState.isLoading}

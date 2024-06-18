@@ -14,7 +14,7 @@ const DIR_PATH = resolve(
 
 export const editEvent = async (
   state: any,
-  { data, eventId }: { data: FormData; eventId: number }
+  { data, eventId }: { data: FormData; eventId: string }
 ) => {
   try {
     const session = await getServerSession(authOptions);
@@ -46,6 +46,7 @@ export const editEvent = async (
           placeId: +validation.data.placeId,
           startTime: new Date(validation.data.startTime),
           ticketsCount: validation.data.ticketsCount,
+          ticketCost: validation.data.ticketCost,
         },
       });
 

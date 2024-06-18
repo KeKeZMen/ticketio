@@ -24,6 +24,7 @@ export const EventsTable = async () => {
       startTime: true,
       ticketsCount: true,
       placeId: true,
+      ticketCost: true,
     },
   });
 
@@ -39,6 +40,7 @@ export const EventsTable = async () => {
             <TableHead className="pl-3">Название</TableHead>
             <TableHead>Дата начала</TableHead>
             <TableHead>Количество билетов</TableHead>
+            <TableHead>Стоимость билета</TableHead>
             <TableHead>Место</TableHead>
             <TableHead className="w-[5%] pr-3">Действия</TableHead>
           </TableRow>

@@ -20,8 +20,11 @@ export const EventRow: FC<PropsType> = ({
   return (
     <TableRow>
       <TableCell className="min-w-[300px]">{event.name}</TableCell>
-      <TableCell className="min-w-[150px]">{format(event.startTime, "PPP", { locale: ru })}</TableCell>
+      <TableCell className="min-w-[150px]">
+        {format(event.startTime, "PPP", { locale: ru })}
+      </TableCell>
       <TableCell>{event.ticketsCount}</TableCell>
+      <TableCell className="min-w-[150px]">{event.ticketCost}₽</TableCell>
       <TableCell className="min-w-[150px]">{event.place.name}</TableCell>
       <TableCell>
         <div className="flex gap-3 items-center justify-center">

@@ -32,6 +32,7 @@ export const createEvent = async (state: any, data: FormData) => {
           placeId: +validation.data.placeId,
           startTime: new Date(validation.data.startTime),
           ticketsCount: validation.data.ticketsCount,
+          ticketCost: validation.data.ticketCost,
         },
       });
 
