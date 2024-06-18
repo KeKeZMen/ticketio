@@ -12,5 +12,6 @@ export const zodSchema = z.object({
     message: "Неверно выбрано время проведения",
   }),
   ticketCost: z.coerce.number({ message: "Поле не может быть пустым" }),
+  description: z.string().optional(),
   preview: z.any(),
 });

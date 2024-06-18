@@ -47,6 +47,7 @@ export const editEvent = async (
           startTime: new Date(validation.data.startTime),
           ticketsCount: validation.data.ticketsCount,
           ticketCost: validation.data.ticketCost,
+          description: validation.data.description,
         },
       });
 
@@ -71,7 +72,7 @@ export const editEvent = async (
     return {
       error: {
         message: String(
-          error /* instanceof ApiError ? error.message : "Ошибка сервера" */
+          error instanceof ApiError ? error.message : "Ошибка сервера"
         ),
       },
     };

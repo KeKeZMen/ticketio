@@ -33,6 +33,7 @@ export const createEvent = async (state: any, data: FormData) => {
           startTime: new Date(validation.data.startTime),
           ticketsCount: validation.data.ticketsCount,
           ticketCost: validation.data.ticketCost,
+          description: validation.data.description,
         },
       });
 

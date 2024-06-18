@@ -25,6 +25,7 @@ export const EventsTable = async () => {
       ticketsCount: true,
       placeId: true,
       ticketCost: true,
+      description: true,
     },
   });
 
