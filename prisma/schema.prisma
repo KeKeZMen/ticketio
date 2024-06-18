@@ -42,6 +42,7 @@ model Event {
   ticketsCount Int      @map("tickets_count")
   placeId      Int      @map("place_id")
   ticketCost   Int      @map("ticket_cost")
+  description  String?  @db.Text
 
   place   Place    @relation(fields: [placeId], references: [id])
   tickets Ticket[]
